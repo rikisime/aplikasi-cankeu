@@ -27,6 +27,13 @@ Pencatat keuangan harian, dengan sistem yang modern, UI yang modern, warna kombi
 5. Export reports to PDF and Excel
 6. Per-user theme personalization (accent color + light/dark mode), persisted server-side
 
+## What's Been Implemented (2026-07-15) - Self-Host Portability Update
+- Replaced Emergent-managed Google Auth with STANDALONE Google OAuth (auth-code/popup flow via @react-oauth/google + backend token exchange with Google using GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET env vars) so the app can run on any domain (e.g. Rumahweb) outside Emergent's infra
+- New endpoint POST /api/auth/google (replaces old /api/auth/session); session/cookie mechanism after login unchanged (custom user_sessions collection, session_token cookie)
+- Frontend gracefully falls back to a setup notice instead of crashing when GOOGLE_CLIENT_ID is unset
+- Added /app/DEPLOY.md with full self-hosting guide: Google Cloud OAuth setup, env vars, MongoDB Atlas setup, build/run commands, and caveat that Rumahweb SHARED hosting (not VPS) likely cannot run a persistent FastAPI/uvicorn process - needs cPanel Python App support or a VPS/alternate backend host
+- Regression-tested: 19/19 backend tests pass, all frontend flows (transactions, categories, reports, export, theme) confirmed unaffected
+
 ## What's Been Implemented (2026-07)
 - Full MVP built and tested end-to-end (backend 18/18 pytest pass, frontend critical flows verified)
 - Real Google OAuth flow (login, session exchange, protected routes, logout)

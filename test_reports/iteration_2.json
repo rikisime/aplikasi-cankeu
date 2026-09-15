@@ -1,0 +1,35 @@
+{
+  "summary": "Regression testing after auth refactor (Emergent Auth -> standalone Google OAuth). Backend: 19/19 pytest cases pass, including new test_auth_google_invalid_code verifying POST /api/auth/google returns clean 401 (not 500) for a fake/invalid code, plus all 18 previously-passing suites (health, /auth/me with Bearer, /auth/theme, categories auto-seed + CRUD + default-delete guard, transactions CRUD + filters, reports for all 4 periods, PDF/Excel export MIME + magic bytes, user data isolation, logout). Frontend: /login renders the amber 'GOOGLE_CLIENT_ID belum diatur' fallback (data-testid='google-login-not-configured') with NO google-login-button and NO crash / white screen while REACT_APP_GOOGLE_CLIENT_ID is empty. Using mock session cookie, /dashboard (KPI cards + Arus Kas chart + period tabs), /transactions (add-transaction modal opens), /reports (export-pdf-button & export-excel-button present), /settings (profile, accent color, dark/light toggle, categories list) all load and render exactly as before. No new console errors introduced by the conditional GoogleOAuthProvider mount (only expected 2x 401 for /auth/me during pre-login initial checkAuth on /login).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_arthaku_api.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "auth.py exchange_google_code correctly maps Google token-endpoint 4xx to HTTP 401 with Indonesian message; no 500 leakage - matches spec.",
+    "server.py generates session_token via secrets.token_hex(32) (256-bit) - cryptographically strong; cookie still httpOnly+secure+SameSite=None for cross-site preview URL - OK.",
+    "App.js conditional GoogleOAuthProvider wrapper prevents the '@react-oauth/google requires clientId' crash while credentials are empty - clean fallback path verified.",
+    "Login.jsx GoogleLoginButton subcomponent isolates useGoogleLogin() call so the hook is never invoked outside GoogleOAuthProvider context - correct pattern.",
+    "AuthContext.jsx no longer parses window.location.hash for legacy Emergent session_id - AuthCallback.jsx is now orphaned and should be deleted or explicitly documented as unused (minor cleanup, not blocking).",
+    "GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET are read from env at module import in auth.py - if user later fills backend/.env values, remember to restart backend (hot reload picks up code changes but not new env vars).",
+    "No rate limiting on POST /api/auth/google - a determined attacker could brute-force code exchange attempts. Acceptable for MVP; add IP-based throttling before public deployment.",
+    "Consider deleting the now-unused /app/frontend/src/pages/AuthCallback.jsx to keep the codebase tidy."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_arthaku_api.py (added test_auth_google_invalid_code)"
+  ],
+  "success_rate": {"backend": "100% (19/19)", "frontend": "100% (all regression flows)"},
+  "test_credentials": "Mock session via mongosh insert into users + user_sessions (test_database). Real Google OAuth cannot be tested end-to-end (GOOGLE_CLIENT_ID intentionally empty) - only the graceful fallback UI was verified.",
+  "seed_data_creation": "Ephemeral TESTA_/TESTB_/TESTL_ users created & cleaned up inside pytest fixtures; TESTUI_user_96857755 created for UI run and cleaned up via mongosh.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Auth refactor regression PASSED. Backend suite /app/backend/tests/test_arthaku_api.py + conftest.py is up-to-date and covers the new /api/auth/google endpoint. When real Google credentials are added (GOOGLE_CLIENT_ID/SECRET in backend/.env and REACT_APP_GOOGLE_CLIENT_ID in frontend/.env), restart backend + frontend (supervisorctl) and verify the Google popup renders in place of the amber fallback; the mock-session cookie method for protected routes remains valid regardless.",
+  "rca of the issue": "N/A - no failures found."
+}

@@ -9,6 +9,14 @@ def test_root(base_url):
 
 
 # --- Auth ---
+def test_auth_google_invalid_code(base_url):
+    r = requests.post(f"{base_url}/api/auth/google", json={"code": "fake_invalid_code_xyz"})
+    # Must be clean 401, not 500
+    assert r.status_code == 401, f"Expected 401, got {r.status_code}: {r.text}"
+    body = r.json()
+    assert "detail" in body
+
+
 def test_auth_me_no_token(base_url):
     r = requests.get(f"{base_url}/api/auth/me")
     assert r.status_code == 401
