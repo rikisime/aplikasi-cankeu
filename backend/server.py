@@ -1,4 +1,5 @@
 import logging
+import secrets
 from pathlib import Path
 
 from fastapi import FastAPI, APIRouter, Depends, Response
@@ -11,15 +12,15 @@ load_dotenv(ROOT_DIR / '.env')
 
 from database import db, client
 from models import User, ThemeUpdate
-from auth import exchange_session_id, get_or_create_user, create_session_for_user, get_current_user
+from auth import exchange_google_code, get_or_create_user, create_session_for_user, get_current_user
 from routes import categories, transactions, reports, export
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
 
-class SessionRequest(BaseModel):
-    session_id: str
+class GoogleAuthRequest(BaseModel):
+    code: str
 
 
 @api_router.get("/")
@@ -27,11 +28,11 @@ async def root():
     return {"message": "ArthaKu API"}
 
 
-@api_router.post("/auth/session")
-async def auth_session(payload: SessionRequest, response: Response):
-    session_data = await exchange_session_id(payload.session_id)
+@api_router.post("/auth/google")
+async def auth_google(payload: GoogleAuthRequest, response: Response):
+    session_data = await exchange_google_code(payload.code)
     user = await get_or_create_user(session_data)
-    session_token = session_data["session_token"]
+    session_token = secrets.token_hex(32)
     await create_session_for_user(user.user_id, session_token)
     response.set_cookie(
         key="session_token",

@@ -1,8 +1,8 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import AuthCallback from "./pages/AuthCallback";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
@@ -10,6 +10,8 @@ import Transactions from "./pages/Transactions";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import { Toaster } from "./components/ui/sonner";
+
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -25,11 +27,6 @@ function ProtectedRoute({ children }) {
 }
 
 function AppRouter() {
-  const location = useLocation();
-  // AuthCallback processing must be checked synchronously via location.hash, not window.location.hash
-  if (location.hash?.includes("session_id=")) {
-    return <AuthCallback />;
-  }
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -80,16 +77,22 @@ function AppRouter() {
 }
 
 function App() {
+  const content = (
+    <BrowserRouter>
+      <AuthProvider>
+        <ThemeProvider>
+          <AppRouter />
+          <Toaster />
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+
+  // GoogleOAuthProvider throws hard if clientId is empty, so only wrap when configured.
+  // Set REACT_APP_GOOGLE_CLIENT_ID in frontend/.env once you create Google OAuth credentials.
   return (
     <div className="App">
-      <BrowserRouter>
-        <AuthProvider>
-          <ThemeProvider>
-            <AppRouter />
-            <Toaster />
-          </ThemeProvider>
-        </AuthProvider>
-      </BrowserRouter>
+      {GOOGLE_CLIENT_ID ? <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>{content}</GoogleOAuthProvider> : content}
     </div>
   );
 }

@@ -1,10 +1,67 @@
+import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
-import { Wallet, PieChart, ShieldCheck } from "lucide-react";
+import { Wallet, PieChart, ShieldCheck, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
+
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+// Only mount useGoogleLogin when a client ID is configured - the hook requires
+// GoogleOAuthProvider context, which App.js skips entirely when unconfigured.
+function GoogleLoginButton() {
+  const { loginWithGoogleCode } = useAuth();
+  const navigate = useNavigate();
+
+  const googleLogin = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: async (codeResponse) => {
+      try {
+        await loginWithGoogleCode(codeResponse.code);
+        navigate("/dashboard");
+      } catch (e) {
+        toast.error("Gagal masuk dengan Google");
+      }
+    },
+    onError: () => toast.error("Gagal masuk dengan Google"),
+  });
+
+  return (
+    <button
+      data-testid="google-login-button"
+      onClick={() => googleLogin()}
+      className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 font-semibold rounded-xl py-3.5 transition-all active:scale-[0.98] shadow-lg"
+    >
+      <GoogleGlyph />
+      Masuk dengan Google
+    </button>
+  );
+}
+
+function GoogleGlyph() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 48 48">
+      <path
+        fill="#FFC107"
+        d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"
+      />
+      <path
+        fill="#FF3D00"
+        d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4c-7.7 0-14.3 4.4-17.7 10.7z"
+      />
+      <path
+        fill="#4CAF50"
+        d="M24 44c5.5 0 10.4-1.8 14.1-5l-6.5-5.3C29.6 35.4 27 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"
+      />
+      <path
+        fill="#1976D2"
+        d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.7l6.5 5.3C41.5 36 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"
+      />
+    </svg>
+  );
+}
 
 export default function Login() {
-  const { login } = useAuth();
-
   return (
     <div className="min-h-screen w-full bg-[#0B0F17] relative overflow-hidden flex items-center justify-center px-4">
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
@@ -34,31 +91,17 @@ export default function Login() {
             akun punya data & tampilan sendiri.
           </p>
 
-          <button
-            data-testid="google-login-button"
-            onClick={login}
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 font-semibold rounded-xl py-3.5 transition-all active:scale-[0.98] shadow-lg"
-          >
-            <svg width="20" height="20" viewBox="0 0 48 48">
-              <path
-                fill="#FFC107"
-                d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"
-              />
-              <path
-                fill="#FF3D00"
-                d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6 29.6 4 24 4c-7.7 0-14.3 4.4-17.7 10.7z"
-              />
-              <path
-                fill="#4CAF50"
-                d="M24 44c5.5 0 10.4-1.8 14.1-5l-6.5-5.3C29.6 35.4 27 36 24 36c-5.3 0-9.7-3.4-11.3-8l-6.6 5.1C9.6 39.6 16.2 44 24 44z"
-              />
-              <path
-                fill="#1976D2"
-                d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.7l6.5 5.3C41.5 36 44 30.5 44 24c0-1.3-.1-2.7-.4-3.5z"
-              />
-            </svg>
-            Masuk dengan Google
-          </button>
+          {GOOGLE_CLIENT_ID ? (
+            <GoogleLoginButton />
+          ) : (
+            <div
+              data-testid="google-login-not-configured"
+              className="w-full flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm rounded-xl py-3.5 px-4"
+            >
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              GOOGLE_CLIENT_ID belum diatur. Lihat DEPLOY.md untuk cara membuat kredensial Google OAuth.
+            </div>
+          )}
 
           <div className="grid grid-cols-3 gap-3 mt-8">
             <div className="flex flex-col items-center gap-1.5 text-center">

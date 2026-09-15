@@ -19,19 +19,15 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // CRITICAL: If returning from OAuth callback, skip the /me check.
-    // AuthCallback will exchange the session_id and establish the session first.
-    if (window.location.hash?.includes("session_id=")) {
-      setLoading(false);
-      return;
-    }
     checkAuth();
   }, [checkAuth]);
 
-  const login = () => {
-    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
-    const redirectUrl = window.location.origin + "/dashboard";
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  // Standalone Google OAuth: exchanges the authorization code (from @react-oauth/google)
+  // for a session via our own backend + Google credentials (GOOGLE_CLIENT_ID/SECRET).
+  const loginWithGoogleCode = async (code) => {
+    const res = await api.post("/auth/google", { code });
+    setUser(res.data);
+    return res.data;
   };
 
   const logout = async () => {
@@ -44,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, logout, checkAuth }}>
+    <AuthContext.Provider value={{ user, setUser, loading, loginWithGoogleCode, logout, checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

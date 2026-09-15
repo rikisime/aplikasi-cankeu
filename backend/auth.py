@@ -6,15 +6,45 @@ from fastapi import Request, HTTPException, Depends
 from database import db
 from models import User
 
-EMERGENT_SESSION_URL = "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data"
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 
-async def exchange_session_id(session_id: str) -> dict:
+async def exchange_google_code(code: str) -> dict:
+    # Standalone Google OAuth (authorization-code / popup flow via @react-oauth/google).
+    # redirect_uri must be the literal string "postmessage" for the popup flow.
     async with httpx.AsyncClient() as client:
-        resp = await client.get(EMERGENT_SESSION_URL, headers={"X-Session-ID": session_id}, timeout=15)
-    if resp.status_code != 200:
-        raise HTTPException(status_code=401, detail="Sesi login tidak valid")
-    return resp.json()
+        token_resp = await client.post(
+            GOOGLE_TOKEN_URL,
+            data={
+                "code": code,
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "redirect_uri": "postmessage",
+                "grant_type": "authorization_code",
+            },
+            timeout=15,
+        )
+        if token_resp.status_code != 200:
+            raise HTTPException(status_code=401, detail="Gagal autentikasi dengan Google")
+        tokens = token_resp.json()
+
+        userinfo_resp = await client.get(
+            GOOGLE_USERINFO_URL,
+            headers={"Authorization": f"Bearer {tokens['access_token']}"},
+            timeout=15,
+        )
+        if userinfo_resp.status_code != 200:
+            raise HTTPException(status_code=401, detail="Gagal mengambil data pengguna Google")
+        info = userinfo_resp.json()
+
+    return {
+        "email": info["email"],
+        "name": info.get("name", info["email"].split("@")[0]),
+        "picture": info.get("picture"),
+    }
 
 
 async def create_session_for_user(user_id: str, session_token: str):
