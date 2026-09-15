@@ -1,0 +1,212 @@
+{
+  "project_meta": {
+    "app_name": "ArthaKu - Pencatat Keuangan Harian Modern",
+    "app_type": "dashboard",
+    "target_audience": "Individual users and multi-account personal finance management in Indonesia",
+    "locale": "id-ID",
+    "currency_symbol": "Rp",
+    "tech_stack": {
+      "framework": "React.js (JavaScript, .js files)",
+      "styling": "Tailwind CSS + Shadcn UI",
+      "icons": "lucide-react, @phosphor-icons/react",
+      "charts": "recharts / shadcn chart",
+      "exports": "jspdf, html2canvas, xlsx / sheetjs",
+      "animations": "framer-motion"
+    }
+  },
+  "typography": {
+    "font_family_heading": "'Outfit', 'Plus Jakarta Sans', sans-serif",
+    "font_family_body": "'Plus Jakarta Sans', sans-serif",
+    "font_family_mono": "'JetBrains Mono', monospace",
+    "forbidden_fonts": [
+      "Space Grotesk",
+      "Inter for headings"
+    ],
+    "scale": {
+      "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight",
+      "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight",
+      "h3_subsection": "text-xl sm:text-2xl font-semibold tracking-tight",
+      "h4_card": "text-lg sm:text-xl font-medium",
+      "body": "text-base leading-relaxed text-slate-700 dark:text-slate-300",
+      "body_small": "text-sm text-slate-500 dark:text-slate-400",
+      "label": "text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500",
+      "mono_amount": "font-mono font-bold tracking-tight"
+    }
+  },
+  "colors": {
+    "system_theme_matrix": {
+      "income_green": {
+        "hex": "#10B981",
+        "tailwind": "emerald-500",
+        "bg_subtle": "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+        "usage": "Positive cash flow, Income transactions, Savings goal increase"
+      },
+      "expense_red": {
+        "hex": "#EF4444",
+        "tailwind": "rose-500",
+        "bg_subtle": "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
+        "usage": "Negative cash flow, Expense transactions, Over-budget alerts"
+      },
+      "balance_blue": {
+        "hex": "#2563EB",
+        "tailwind": "blue-600",
+        "bg_subtle": "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+        "usage": "Net balance, Primary buttons, Navigation active state, Analytics trendlines"
+      }
+    },
+    "user_theme_personalization": {
+      "ocean_blue": {
+        "name": "Samudra Blue",
+        "primary": "#2563EB",
+        "accent": "#3B82F6",
+        "ring": "ring-blue-500"
+      },
+      "emerald_green": {
+        "name": "Zamrud Green",
+        "primary": "#059669",
+        "accent": "#10B981",
+        "ring": "ring-emerald-500"
+      },
+      "crimson_red": {
+        "name": "Delima Red",
+        "primary": "#DC2626",
+        "accent": "#EF4444",
+        "ring": "ring-rose-500"
+      },
+      "midnight_slate": {
+        "name": "Malam Dark",
+        "primary": "#0F172A",
+        "accent": "#38BDF8",
+        "ring": "ring-slate-400"
+      }
+    },
+    "surface_modes": {
+      "light": {
+        "bg_canvas": "bg-slate-50",
+        "bg_surface": "bg-white border-slate-200/80 shadow-sm",
+        "bg_surface_elevated": "bg-slate-100/80 border-slate-200",
+        "text_main": "text-slate-900",
+        "text_subdued": "text-slate-600"
+      },
+      "dark": {
+        "bg_canvas": "bg-[#0B0F17]",
+        "bg_surface": "bg-[#111827] border-slate-800/80 shadow-md",
+        "bg_surface_elevated": "bg-[#1F2937] border-slate-700/60",
+        "text_main": "text-slate-100",
+        "text_subdued": "text-slate-400"
+      }
+    }
+  },
+  "layout_and_grid": {
+    "dashboard_mode": "High Density Grid (MODE B)",
+    "container_padding": "p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8",
+    "bento_ratios": {
+      "summary_cards": "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6",
+      "main_charts_section": "grid grid-cols-1 lg:grid-cols-3 gap-6",
+      "chart_hero_span": "lg:col-span-2",
+      "recent_transactions_span": "lg:col-span-1",
+      "reports_grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    }
+  },
+  "component_guidelines": {
+    "header_and_nav": {
+      "style": "Sticky header with glassmorphism backdrop-blur-xl bg-white/80 dark:bg-[#111827]/80 border-b border-slate-200 dark:border-slate-800 z-40 px-4 sm:px-6 py-3 flex items-center justify-between",
+      "elements": [
+        "Brand Logo (ArthaKu) + Account Swapper",
+        "Time period quick selector (Hari ini, Bulan ini, 3 Bulan, Tahun ini)",
+        "User Profile Dropdown with Google Sync Indicator & Theme Customizer",
+        "Quick Action (+ Transaksi Baru)"
+      ]
+    },
+    "cards": {
+      "style": "Rounded-2xl border bg-white dark:bg-[#111827] p-5 sm:p-6 transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm",
+      "cardless_data": "For financial stats, use inner padded containers with crisp contrast borders and subtle 1px glows."
+    },
+    "buttons": {
+      "primary": "rounded-xl font-medium px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white shadow-sm transition-all duration-150 flex items-center gap-2",
+      "income_cta": "rounded-xl font-medium px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all",
+      "expense_cta": "rounded-xl font-medium px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition-all",
+      "outline": "rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-2 transition-all"
+    },
+    "tables": {
+      "style": "w-full text-left text-sm border-collapse",
+      "header_row": "border-b border-slate-200 dark:border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400 py-3 px-4",
+      "body_row": "border-b border-slate-100 dark:border-slate-800/60 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors py-3 px-4"
+    },
+    "modals_and_dialogs": {
+      "style": "Use Shadcn Dialog with customized overlay backdrop-blur-sm bg-black/60 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xl"
+    }
+  },
+  "key_features_ux_flow": {
+    "google_login": {
+      "flow": "Mocked Google Auth modal with account avatar switcher (e.g., 'Budi Santoso', 'Siti Rahma', 'Demo User'), preserving isolated data per user.",
+      "visual": "Clean OAuth badge with Google G logo, immediate theme hydration based on active user's saved theme."
+    },
+    "transaction_entry": {
+      "flow": "Quick modal or drawer with Tabs: [Pengeluaran (Expense)] | [Pemasukan (Income)]. Field for Amount (Rp format input), Category dropdown (with default + 'Tambah Kategori Baru' option), Date picker (Shadcn Popover + Calendar), Description & Payment Method (Cash, Bank, E-Wallet).",
+      "instant_feedback": "Sonner toast message upon transaction record addition/deletion."
+    },
+    "categories": {
+      "default_categories": [
+        {"name": "Makanan & Minuman", "type": "expense", "icon": "Utensils", "color": "rose"},
+        {"name": "Gaji & Pendapatan", "type": "income", "icon": "Wallet", "color": "emerald"},
+        {"name": "Transportasi", "type": "expense", "icon": "Car", "color": "amber"},
+        {"name": "Belanja", "type": "expense", "icon": "ShoppingBag", "color": "purple"},
+        {"name": "Tagihan & Utilitas", "type": "expense", "icon": "Zap", "color": "blue"},
+        {"name": "Investasi & Tabungan", "type": "income", "icon": "TrendingUp", "color": "teal"}
+      ],
+      "custom_categories": "Users can create custom categories with color code, type (income/expense), and icon picker."
+    },
+    "graphical_reports": {
+      "periods": ["Harian (Daily)", "Bulanan (Monthly)", "3 Bulan (3-Month)", "Tahunan (Yearly)"],
+      "chart_types": [
+        "Area / Line Chart: Income vs Expense Cashflow trend",
+        "Pie / Donut Chart: Expense Breakdown by Category",
+        "Bar Chart: Comparison by day/month",
+        "Summary KPI Stats: Total Pemasukan, Total Pengeluaran, Saldo Bersih, Hemat Rate (%)"
+      ]
+    },
+    "export_reports": {
+      "formats": ["PDF Report (styled print layout with logo & chart summary)", "Excel (XLSX) Spreadsheet export"],
+      "action_trigger": "Dedicated 'Ekspor Laporan' button with format dropdown in the Analytics header."
+    },
+    "user_theme_personalization": {
+      "controls": "Theme personalization panel in user profile settings allows picking accent colors (Blue, Green, Red, Midnight), toggle Light/Dark mode, and save preferences linked to active logged-in account."
+    }
+  },
+  "testing_attributes": {
+    "convention": "kebab-case data-testid attributes on key interactive components",
+    "required_test_ids": {
+      "login_btn": "google-login-button",
+      "account_switcher": "account-switcher-dropdown",
+      "add_transaction_btn": "add-transaction-button",
+      "transaction_modal": "transaction-form-modal",
+      "transaction_type_tab": "transaction-type-tab",
+      "amount_input": "transaction-amount-input",
+      "category_select": "transaction-category-select",
+      "save_transaction_btn": "save-transaction-submit-button",
+      "period_filter_daily": "period-filter-daily",
+      "period_filter_monthly": "period-filter-monthly",
+      "period_filter_3months": "period-filter-3months",
+      "period_filter_yearly": "period-filter-yearly",
+      "export_pdf_btn": "export-pdf-button",
+      "export_excel_btn": "export-excel-button",
+      "add_category_btn": "add-custom-category-button",
+      "theme_toggle_btn": "theme-toggle-button",
+      "user_profile_btn": "user-profile-button",
+      "balance_summary_card": "balance-summary-card",
+      "income_summary_card": "income-summary-card",
+      "expense_summary_card": "expense-summary-card",
+      "recent_transactions_list": "recent-transactions-list"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow JavaScript React conventions (.js files, no TS type assertions).",
+    "Ensure monetary values are formatted with Indonesian Rupiah style (e.g. 'Rp 1.500.000').",
+    "DO NOT use a plain white or transparent header without blur; use backdrop-blur-xl bg-white/80 or bg-slate-900/80.",
+    "Implement Sonner toasts for all add, edit, delete, export, and account switch events.",
+    "Provide rich realistic default data for Indonesian context (Gaji, Warung/Supermarket, Listrik PLN, Pulsa, Transportasi) across multiple dates so charts look detailed immediately.",
+    "Ensure all interactive buttons, inputs, tabs, and cards carry explicit `data-testid` attributes as listed in testing_attributes.",
+    "Include local storage / user-state persistence so changing active account or theme updates UI dynamically."
+  ]
+}
